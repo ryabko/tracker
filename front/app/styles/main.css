@@ -14,3 +14,20 @@ body {
     height: 100%;
     width: 100%;
 }
+
+#dashboard {
+    font-size: small;
+    background-color: white;
+    border: 1px solid black;
+    /*width: 200px;*/
+    /*height: 200px;*/
+    padding: 5px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+}
+
+.hidden {
+    display: none;
+}

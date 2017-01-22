@@ -19,7 +19,20 @@
 
 </head>
 <body>
-    <div id="map"></div>
+    <div id="map">
+        <div id="dashboard" class="hidden">
+            <div id="pin-input-block">
+                <label>PIN: <input id="pin-edit" type="text" size="6"></label>
+                <button id="start-btn">Войти</button>
+            </div>
+            <div id="loading-block" class="hidden">
+                Загрузка...
+            </div>
+            <div id="info-block" class="hidden">
+                PIN: <span id="pin-span"></span> <button id="exit-btn">Выйти</button>
+            </div>
+        </div>
+    </div>
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
