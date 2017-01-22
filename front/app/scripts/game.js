@@ -26,7 +26,7 @@ var game = (function() {
         init: function(ymaps, mapId, onInit) {
             map.init(ymaps, mapId);
             navigator.geolocation.watchPosition(function (position) {
-                var _myPos = [position.coords.latitude, position.coords.longitude];
+                _myPos = [position.coords.latitude, position.coords.longitude];
                 console.log("my position: " + _myPos);
                 map.showMe(_myPos);
             }, function () {}, appSettings.posWatchOptions);

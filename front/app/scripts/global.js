@@ -1,4 +1,4 @@
-window.appSettings = {
+var appSettings = {
 
     mapOptions: {
         center: [51.661535, 39.200287],
