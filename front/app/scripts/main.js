@@ -1,39 +1,21 @@
-function init(ymaps) {
-    var map = new ymaps.Map('map', {
-        center: [51.661535, 39.200287],
-        zoom: 12,
-        controls: []
-    });
+function initMe(ymaps) {
+    var map = new ymaps.Map('map', appSettings.mapOptions);
 
-    (function ($) {
-        // $(function () {
-
-            console.log('Ready');
-
+    (function () {
             var me = null;
             if (navigator.geolocation) {
-
-                var watchOptions = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 10000
-                };
-
                 navigator.geolocation.watchPosition(function (position) {
-                    var lat = position.coords.latitude;
-                    var long = position.coords.longitude;
-                    console.log('[' + lat + ',' + long + ']');
+                    var coords = [position.coords.latitude, position.coords.longitude];
 
                     if (me == null) {
-                        me = new ymaps.Placemark([lat, long], {}, {preset: 'islands#redCircleDotIcon'});
+                        me = new ymaps.Placemark(coords, {}, {preset: 'islands#redCircleDotIcon'});
                         map.geoObjects.add(me);
-                        map.setCenter([lat, long]);
+                        map.setCenter(coords);
                     } else {
-                        me.geometry.setCoordinates([lat, long]);
+                        me.geometry.setCoordinates(coords);
                     }
-                }, function () {}, watchOptions);
+                }, function () {}, appSettings.posWatchOptions);
             }
-        // })
-    })(jQuery);
+    })();
 
 }
