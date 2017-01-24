@@ -38,13 +38,34 @@ public class UserService {
         }
     }
 
-    public List<User> findAll() {
+//    public User findById(String id) {
+//        try (Connection connection = sql2o.open()) {
+//            return connection.createQuery(
+//                    "select id, pin, creation_date creationDate, update_date updateDate, " +
+//                            "ip, latitude, longitude, bot from users where id = :id")
+//                    .addParameter("id", id)
+//                    .executeAndFetch(User.class)
+//                    .stream().findFirst().orElse(null);
+//        }
+//    }
+
+    public List<User> findByPin(String pin) {
         try (Connection connection = sql2o.open()) {
             return connection.createQuery(
                     "select id, pin, creation_date creationDate, update_date updateDate, " +
-                            "ip, latitude, longitude, bot from users")
+                            "ip, latitude, longitude, bot from users where pin = :pin")
+                    .addParameter("pin", pin)
                     .executeAndFetch(User.class);
         }
     }
+
+//    public List<User> findAll() {
+//        try (Connection connection = sql2o.open()) {
+//            return connection.createQuery(
+//                    "select id, pin, creation_date creationDate, update_date updateDate, " +
+//                            "ip, latitude, longitude, bot from users")
+//                    .executeAndFetch(User.class);
+//        }
+//    }
 
 }

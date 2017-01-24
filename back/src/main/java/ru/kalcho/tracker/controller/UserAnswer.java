@@ -1,6 +1,6 @@
 package ru.kalcho.tracker.controller;
 
-import ru.kalcho.tracker.model.TeamState;
+import ru.kalcho.tracker.model.GameState;
 
 import java.util.UUID;
 
@@ -10,9 +10,9 @@ import java.util.UUID;
 public class UserAnswer {
 
     private String id;
-    private TeamState state;
+    private GameState state;
 
-    public UserAnswer(UUID id, TeamState state) {
+    public UserAnswer(UUID id, GameState state) {
         this.id = id != null ? id.toString() : null;
         this.state = state;
     }
@@ -25,11 +25,11 @@ public class UserAnswer {
         this.id = id;
     }
 
-    public TeamState getState() {
+    public GameState getState() {
         return state;
     }
 
-    public void setState(TeamState state) {
+    public void setState(GameState state) {
         this.state = state;
     }
 

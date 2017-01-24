@@ -5,8 +5,8 @@ import org.sql2o.quirks.NoQuirks;
 import ru.kalcho.sql2o.LocalDateTimeConverter;
 import ru.kalcho.sql2o.UUIDConverter;
 import ru.kalcho.tracker.controller.UserController;
+import ru.kalcho.tracker.service.GameService;
 import ru.kalcho.tracker.service.UserService;
-import spark.Spark;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,8 +26,9 @@ public class Main {
         }});
 
         UserService userService = new UserService(sql2o);
+        GameService gameService = new GameService(userService);
 
-        new UserController(userService).start();
+        new UserController(userService, gameService).start();
 
         options("/*", (request, response) -> {
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");

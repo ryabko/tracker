@@ -1,5 +1,7 @@
 package ru.kalcho.tracker.controller;
 
+import ru.kalcho.tracker.model.GameState;
+import ru.kalcho.tracker.service.GameService;
 import ru.kalcho.tracker.service.UserService;
 import ru.kalcho.tracker.util.JsonUtils;
 
@@ -14,9 +16,11 @@ import static spark.Spark.post;
 public class UserController {
 
     private UserService userService;
+    private GameService gameService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, GameService gameService) {
         this.userService = userService;
+        this.gameService = gameService;
     }
 
     public void start() {
@@ -25,10 +29,10 @@ public class UserController {
 
             UUID id = userService.createUser(payload.getPin(), LocalDateTime.now(), request.ip(),
                     payload.getLatitude(), payload.getLongitude(), false);
-            response.type("application/json; charset=UTF-8");
+            GameState state = gameService.obtainGameState(payload.getPin());
 
-            UserAnswer answer = new UserAnswer(id, null);
-            return JsonUtils.objectToJSON(answer);
+            response.type("application/json; charset=UTF-8");
+            return JsonUtils.objectToJSON(new UserAnswer(id, state));
         });
     }
 

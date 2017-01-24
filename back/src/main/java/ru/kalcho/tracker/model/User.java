@@ -1,5 +1,7 @@
 package ru.kalcho.tracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,12 +11,23 @@ import java.util.UUID;
 public class User {
 
     private UUID id;
+
+    @JsonIgnore
     private String pin;
+
+    @JsonIgnore
     private LocalDateTime creationDate;
+
+    @JsonIgnore
     private LocalDateTime updateDate;
+
+    @JsonIgnore
     private String ip;
+
     private Float latitude;
     private Float longitude;
+
+    @JsonIgnore
     private boolean bot;
 
     public UUID getId() {
@@ -72,6 +85,14 @@ public class User {
     public void setLongitude(Float longitude) {
         this.longitude = longitude;
     }
+
+//    public Coordinates getCoordinates() {
+//        return coordinates;
+//    }
+//
+//    public void setCoordinates(Coordinates coordinates) {
+//        this.coordinates = coordinates;
+//    }
 
     public boolean isBot() {
         return bot;
