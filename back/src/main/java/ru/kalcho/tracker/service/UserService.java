@@ -76,12 +76,13 @@ public class UserService {
             StringBuilder sql = new StringBuilder("select id, pin, creation_date creationDate, " +
                     "update_date updateDate, ip, latitude, longitude, bot from users where pin = :pin");
             if (activeTimeout > 0) {
-                sql.append(" and update_date > date_add(now(), interval -:timeout second)");
+                sql.append(" and (update_date > date_add(now(), interval -:timeout second) or bot = :bot)");
             }
             Query query = connection.createQuery(sql.toString())
                     .addParameter("pin", pin);
             if (activeTimeout > 0) {
                 query.addParameter("timeout", activeTimeout);
+                query.addParameter("bot", 1);
             }
             return query.executeAndFetch(User.class);
         }
