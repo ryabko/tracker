@@ -1,6 +1,7 @@
 var map = (function() {
     var _map = null;
     var _me = null;
+    var _marks = {};
 
     return {
         init: function(ymaps, mapId) {
@@ -13,6 +14,36 @@ var map = (function() {
                 _map.setCenter(coords);
             } else {
                 _me.geometry.setCoordinates(coords);
+            }
+        },
+        showTeam: function(players, ownId) {
+            var ids = [];
+            for (var i = 0; i < players.length; i++) {
+                var id = players[i].user.id;
+                if (id == ownId) {
+                    continue;
+                }
+                var coords = [players[i].user.latitude, players[i].user.longitude];
+                var mark = _marks[id];
+                if (mark) {
+                    console.log("Changing coordinates for " + id);
+                    mark.geometry.setCoordinates(coords);
+                } else {
+                    console.log("Adding coordinates for " + id);
+                    mark = new ymaps.Placemark(coords, {}, {preset: 'islands#redCircleDotIcon'});
+                    _map.geoObjects.add(mark);
+                    _marks[id] = mark;
+                }
+                ids.push(id);
+            }
+            for (var key in _marks) {
+                if (_marks.hasOwnProperty(key)) {
+                    if (ids.indexOf(key) == -1) {
+                        console.log("Deleting coordinates for " + key);
+                        _map.geoObjects.remove(_marks[key]);
+                        delete _marks[key];
+                    }
+                }
             }
         }
     }
@@ -47,6 +78,7 @@ var game = (function() {
                 console.log("Game connected");
                 console.log(data);
                 Cookies.set("uid", data.id, {expires: 7});
+                map.showTeam(data.state.players, data.id);
                 callbacks.onConnect();
             }).fail(function() {
                 console.log("Game connection error");
@@ -58,6 +90,7 @@ var game = (function() {
                 id: Cookies.get("uid")
             }).done(function() {
                 Cookies.remove("uid");
+                map.showTeam([]);
                 onDisconnect();
             }).fail(function() {
                 console.log("Disconnecting error");
