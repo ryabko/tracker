@@ -1,6 +1,7 @@
 package ru.kalcho.tracker.controller;
 
 import ru.kalcho.tracker.model.GameState;
+import ru.kalcho.tracker.model.User;
 import ru.kalcho.tracker.service.GameService;
 import ru.kalcho.tracker.service.UserService;
 import ru.kalcho.tracker.util.JsonUtils;
@@ -8,7 +9,7 @@ import ru.kalcho.tracker.util.JsonUtils;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 /**
  *
@@ -23,7 +24,7 @@ public class UserController {
         this.gameService = gameService;
     }
 
-    public void start() {
+    public void init() {
         post("/api/users", "application/json", (request, response) -> {
             UserPayload payload = JsonUtils.jsonToObject(request.body(), UserPayload.class);
 
@@ -31,9 +32,30 @@ public class UserController {
                     payload.getLatitude(), payload.getLongitude(), false);
             GameState state = gameService.obtainGameState(payload.getPin());
 
-            response.type("application/json; charset=UTF-8");
             return JsonUtils.objectToJSON(new UserAnswer(id, state));
         });
+
+        put("/api/users", "application/json", (request, response) -> {
+            UserPayload payload = JsonUtils.jsonToObject(request.body(), UserPayload.class);
+
+            UUID id = UUID.fromString(payload.getId());
+            User user = userService.findById(id);
+            userService.updateUser(id, LocalDateTime.now(), payload.getLatitude(), payload.getLongitude());
+
+            GameState state = gameService.obtainGameState(user.getPin());
+
+            return JsonUtils.objectToJSON(new UserAnswer(id, state));
+        });
+
+        delete("/api/users", "application/json", (request, response) -> {
+            UserPayload payload = JsonUtils.jsonToObject(request.body(), UserPayload.class);
+
+            UUID id = UUID.fromString(payload.getId());
+            userService.removeUser(id);
+
+            return JsonUtils.objectToJSON(new UserAnswer(id, null));
+        });
+
     }
 
 }

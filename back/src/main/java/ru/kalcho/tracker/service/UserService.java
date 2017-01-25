@@ -1,6 +1,7 @@
 package ru.kalcho.tracker.service;
 
 import org.sql2o.Connection;
+import org.sql2o.Query;
 import org.sql2o.Sql2o;
 import ru.kalcho.tracker.model.User;
 
@@ -38,24 +39,51 @@ public class UserService {
         }
     }
 
-//    public User findById(String id) {
-//        try (Connection connection = sql2o.open()) {
-//            return connection.createQuery(
-//                    "select id, pin, creation_date creationDate, update_date updateDate, " +
-//                            "ip, latitude, longitude, bot from users where id = :id")
-//                    .addParameter("id", id)
-//                    .executeAndFetch(User.class)
-//                    .stream().findFirst().orElse(null);
-//        }
-//    }
+    public void updateUser(UUID id, LocalDateTime date, Float latitude, Float longitude) {
+        try (Connection connection = sql2o.open()) {
+            connection.createQuery("update users set update_date = :update_date, " +
+                    "latitude = :latitude, longitude = :longitude where id = :id")
+                    .addParameter("id", id)
+                    .addParameter("update_date", date)
+                    .addParameter("latitude", latitude)
+                    .addParameter("longitude", longitude)
+                    .executeUpdate();
+        }
+    }
 
-    public List<User> findByPin(String pin) {
+    public void removeUser(UUID id) {
+        try (Connection connection = sql2o.open()) {
+            connection.createQuery("delete from users where id = :id")
+                    .addParameter("id", id)
+                    .executeUpdate();
+        }
+
+    }
+
+    public User findById(UUID id) {
         try (Connection connection = sql2o.open()) {
             return connection.createQuery(
                     "select id, pin, creation_date creationDate, update_date updateDate, " +
-                            "ip, latitude, longitude, bot from users where pin = :pin")
-                    .addParameter("pin", pin)
-                    .executeAndFetch(User.class);
+                            "ip, latitude, longitude, bot from users where id = :id")
+                    .addParameter("id", id)
+                    .executeAndFetch(User.class)
+                    .stream().findFirst().orElse(null);
+        }
+    }
+
+    public List<User> findByPin(String pin, int activeTimeout) {
+        try (Connection connection = sql2o.open()) {
+            StringBuilder sql = new StringBuilder("select id, pin, creation_date creationDate, " +
+                    "update_date updateDate, ip, latitude, longitude, bot from users where pin = :pin");
+            if (activeTimeout > 0) {
+                sql.append(" and update_date > date_add(now(), interval -:timeout second)");
+            }
+            Query query = connection.createQuery(sql.toString())
+                    .addParameter("pin", pin);
+            if (activeTimeout > 0) {
+                query.addParameter("timeout", activeTimeout);
+            }
+            return query.executeAndFetch(User.class);
         }
     }
 

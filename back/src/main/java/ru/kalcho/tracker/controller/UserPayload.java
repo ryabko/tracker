@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class UserPayload {
 
+    private String id;
+
     private String pin;
 
     @JsonProperty("lat")
@@ -14,6 +16,14 @@ public class UserPayload {
 
     @JsonProperty("long")
     private Float longitude;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getPin() {
         return pin;

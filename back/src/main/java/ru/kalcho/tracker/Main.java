@@ -26,9 +26,9 @@ public class Main {
         }});
 
         UserService userService = new UserService(sql2o);
-        GameService gameService = new GameService(userService);
+        GameService gameService = new GameService(userService, 60);
 
-        new UserController(userService, gameService).start();
+        new UserController(userService, gameService).init();
 
         options("/*", (request, response) -> {
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
@@ -43,6 +43,8 @@ public class Main {
 
             return "OK";
         });
+
+        before((request, response) -> response.type("application/json; charset=UTF-8"));
 
         before((request, response) -> {
             String origin = request.headers("Origin");
