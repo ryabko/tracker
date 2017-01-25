@@ -21,6 +21,7 @@ var map = (function() {
 var game = (function() {
     var _myPos = null;
     var _onUpdate = null;
+    var initialized = false;
 
     return {
         init: function(ymaps, mapId, onInit) {
@@ -29,26 +30,66 @@ var game = (function() {
                 _myPos = [position.coords.latitude, position.coords.longitude];
                 console.log("my position: " + _myPos);
                 map.showMe(_myPos);
+                if (!initialized) {
+                    onInit();
+                    initialized = true;
+                }
             }, function () {}, appSettings.posWatchOptions);
-
-            onInit();
         },
-        connect: function(callbacks) {
+        connect: function(pin, callbacks) {
             _onUpdate = callbacks.onUpdate;
-            console.log("Game connecting....");
-            callbacks.onConnect();
+            console.log("Game connecting.....");
+            api.request("/users", "post", {
+                pin: pin,
+                lat: _myPos != null ? _myPos[0] : null,
+                long: _myPos != null ? _myPos[1] : null
+            }).done(function(data) {
+                console.log("Game connected");
+                console.log(data);
+                Cookies.set("uid", data.id, {expires: 7});
+                callbacks.onConnect();
+            }).fail(function() {
+                console.log("Game connection error");
+            });
         },
         disconnect: function(onDisconnect) {
             console.log("Game disconnecting....");
-            onDisconnect();
+            api.request("/users", "delete", {
+                id: Cookies.get("uid")
+            }).done(function() {
+                Cookies.remove("uid");
+                onDisconnect();
+            }).fail(function() {
+                console.log("Disconnecting error");
+            })
         }
     }
+}());
+
+var api = (function() {
+    return {
+        post: function(path, data) {
+            return req(path, "post", data);
+        },
+        put: function(path, data) {
+
+        },
+        request: function(path, method, data) {
+            return $.ajax({
+                url: appSettings.apiEndpoint + path,
+                type: method,
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            });
+        }
+}
 }());
 
 var dashboard = (function() {
     var connect = function(pin) {
         showBlock("loading");
-        game.connect({
+        game.connect(pin, {
             onConnect: function() {
                 $pinSpan.text(pin);
                 showBlock("info");
