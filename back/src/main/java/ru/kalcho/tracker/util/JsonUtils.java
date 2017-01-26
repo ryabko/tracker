@@ -38,7 +38,7 @@ public class JsonUtils {
     private static ObjectMapper createObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JSR310Module()); // for supporting Java 8 dates
-        mapper.enable(SerializationFeature.INDENT_OUTPUT); // for pretty print
+//        mapper.enable(SerializationFeature.INDENT_OUTPUT); // for pretty print
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // for presenting dates as String, not array
         return mapper;
     }

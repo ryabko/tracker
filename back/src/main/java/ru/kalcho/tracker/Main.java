@@ -1,5 +1,7 @@
 package ru.kalcho.tracker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.quirks.NoQuirks;
 import ru.kalcho.sql2o.LocalDateTimeConverter;
@@ -11,6 +13,7 @@ import ru.kalcho.tracker.service.GameService;
 import ru.kalcho.tracker.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 import static spark.Spark.*;
@@ -19,6 +22,8 @@ import static spark.Spark.*;
  *
  */
 public class Main {
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         Sql2o sql2o = new Sql2o("jdbc:mysql://" + System.getenv("DB_HOST") + "/" + System.getenv("DB_NAME"),
@@ -48,6 +53,11 @@ public class Main {
             return "OK";
         });
 
+        after((request, response) ->
+                logger.info(new Date() + "{" + request.requestMethod() + request.uri() + request.body() +
+                        " - " + response.status() + " " + response.body())
+        );
+
         before((request, response) -> response.type("application/json; charset=UTF-8"));
 
         before((request, response) -> {
@@ -57,8 +67,8 @@ public class Main {
             }
         });
 
-        exception(Exception.class, (exception, request, response) -> {
-            exception.printStackTrace();
+        exception(Exception.class, (e, request, response) -> {
+            logger.error(e.getMessage(), e);
         });
     }
 
