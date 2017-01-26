@@ -10,3 +10,8 @@
 - DB_NAME
 - DB_USERNAME
 - DB_PASSWORD
+
+Развертывание
+---
+Сборка gradle: задача distTar
+Запуск: bin/track-back
