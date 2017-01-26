@@ -31,7 +31,7 @@ var map = (function() {
                 if (mark) {
                     console.log('Changing coordinates for ' + id);
                     mark.geometry.setCoordinates(coords);
-                    mark.options.set("preset", preset)
+                    mark.options.set('preset', preset)
                 } else {
                     console.log('Adding coordinates for ' + id);
                     mark = new ymaps.Placemark(coords, {}, {preset: preset});
@@ -55,16 +55,16 @@ var map = (function() {
             if (state.destination) {
                 var destCoords = [state.destination.latitude, state.destination.longitude];
                 if (_destination) {
-                    console.log("Updating destination");
+                    console.log('Updating destination');
                     _destination.geometry.setCoordinates(destCoords);
                 } else {
-                    console.log("Creating destination");
+                    console.log('Creating destination');
                     _destination = new ymaps.Placemark(destCoords, {}, {preset: 'islands#blueFamilyCircleIcon'});
                     _map.geoObjects.add(_destination);
                 }
             } else {
                 if (_destination) {
-                    console.log("Removing destination");
+                    console.log('Removing destination');
                     _map.geoObjects.remove(_destination);
                     _destination = null;
                 }
@@ -81,7 +81,7 @@ var game = (function() {
     var _initialized = false;
 
     var update = function() {
-        console.log("update");
+        console.log('update');
         api.request('/users', 'put', {
             id: _myId,
             lat: _myPos != null ? _myPos[0] : null,
