@@ -18,3 +18,13 @@ create table users (
   bot bool,
   primary key(id)
 ) default charset=utf8;
+
+drop table if exists check_points;
+create table check_points (
+  id int not null auto_increment,
+  name varchar(50) not null,
+  latitude float(10, 6) not null,
+  longitude float(10, 6) not null,
+  radius int not null,
+  primary key(id)
+) default charset=utf8;

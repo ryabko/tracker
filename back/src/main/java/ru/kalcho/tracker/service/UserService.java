@@ -57,7 +57,6 @@ public class UserService {
                     .addParameter("id", id)
                     .executeUpdate();
         }
-
     }
 
     public User findById(UUID id) {
