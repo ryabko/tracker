@@ -1,7 +1,8 @@
 var map = (function() {
     var _map = null;
     var _me = null;
-    var _marks = {};
+    var _otherPlayers = {};
+    var _destination = null;
 
     return {
         init: function(ymaps, mapId) {
@@ -16,17 +17,17 @@ var map = (function() {
                 _me.geometry.setCoordinates(coords);
             }
         },
-        showTeam: function(players, ownId) {
+        showState: function(state, ownId) {
             var ids = [];
-            for (var i = 0; i < players.length; i++) {
-                var id = players[i].user.id;
-                var preset = players[i].target ? 'islands#darkGreenCircleDotIcon' : 'islands#redCircleDotIcon';
+            for (var i = 0; i < state.players.length; i++) {
+                var id = state.players[i].user.id;
+                var preset = state.players[i].target ? 'islands#darkGreenCircleDotIcon' : 'islands#redCircleDotIcon';
                 if (id == ownId) {
                     _me.options.set('preset', preset);
                     continue;
                 }
-                var coords = [players[i].user.latitude, players[i].user.longitude];
-                var mark = _marks[id];
+                var coords = [state.players[i].user.latitude, state.players[i].user.longitude];
+                var mark = _otherPlayers[id];
                 if (mark) {
                     console.log('Changing coordinates for ' + id);
                     mark.geometry.setCoordinates(coords);
@@ -35,17 +36,37 @@ var map = (function() {
                     console.log('Adding coordinates for ' + id);
                     mark = new ymaps.Placemark(coords, {}, {preset: preset});
                     _map.geoObjects.add(mark);
-                    _marks[id] = mark;
+                    _otherPlayers[id] = mark;
                 }
                 ids.push(id);
             }
-            for (var key in _marks) {
-                if (_marks.hasOwnProperty(key)) {
+            for (var key in _otherPlayers) {
+                if (_otherPlayers.hasOwnProperty(key)) {
                     if (ids.indexOf(key) == -1) {
                         console.log('Deleting coordinates for ' + key);
-                        _map.geoObjects.remove(_marks[key]);
-                        delete _marks[key];
+                        _map.geoObjects.remove(_otherPlayers[key]);
+                        delete _otherPlayers[key];
                     }
+                }
+            }
+            if (state.players.length == 0) {
+                _me.options.set('preset', 'islands#redCircleDotIcon');
+            }
+            if (state.destination) {
+                var destCoords = [state.destination.latitude, state.destination.longitude];
+                if (_destination) {
+                    console.log("Updating destination");
+                    _destination.geometry.setCoordinates(destCoords);
+                } else {
+                    console.log("Creating destination");
+                    _destination = new ymaps.Placemark(destCoords, {}, {preset: 'islands#blueFamilyCircleIcon'});
+                    _map.geoObjects.add(_destination);
+                }
+            } else {
+                if (_destination) {
+                    console.log("Removing destination");
+                    _map.geoObjects.remove(_destination);
+                    _destination = null;
                 }
             }
         }
@@ -68,7 +89,7 @@ var game = (function() {
         }).done(function(data) {
             console.log('Updated');
             console.log(data);
-            map.showTeam(data.state.players, _myId);
+            map.showState(data.state, _myId);
         }).fail(function() {
             console.log('Updating error');
         });
@@ -99,7 +120,7 @@ var game = (function() {
                 console.log(data);
                 _myId = data.id;
                 Cookies.set('uid', data.id, {expires: 7});
-                map.showTeam(data.state.players, data.id);
+                map.showState(data.state, data.id);
                 _updateTimer = setInterval(update, appSettings.updateInterval * 1000);
                 callbacks.onConnect();
             }).fail(function() {
@@ -116,7 +137,7 @@ var game = (function() {
                 }
                 _myId = null;
                 Cookies.remove('uid');
-                map.showTeam([]);
+                map.showState({players: [], destination: null});
                 onDisconnect();
             }).fail(function() {
                 console.log('Disconnecting error');
