@@ -26,10 +26,10 @@ var map = (function() {
                 var coords = [players[i].user.latitude, players[i].user.longitude];
                 var mark = _marks[id];
                 if (mark) {
-                    console.log("Changing coordinates for " + id);
+                    console.log('Changing coordinates for ' + id);
                     mark.geometry.setCoordinates(coords);
                 } else {
-                    console.log("Adding coordinates for " + id);
+                    console.log('Adding coordinates for ' + id);
                     mark = new ymaps.Placemark(coords, {}, {preset: 'islands#redCircleDotIcon'});
                     _map.geoObjects.add(mark);
                     _marks[id] = mark;
@@ -39,7 +39,7 @@ var map = (function() {
             for (var key in _marks) {
                 if (_marks.hasOwnProperty(key)) {
                     if (ids.indexOf(key) == -1) {
-                        console.log("Deleting coordinates for " + key);
+                        console.log('Deleting coordinates for ' + key);
                         _map.geoObjects.remove(_marks[key]);
                         delete _marks[key];
                     }
@@ -59,7 +59,7 @@ var game = (function() {
             map.init(ymaps, mapId);
             navigator.geolocation.watchPosition(function (position) {
                 _myPos = [position.coords.latitude, position.coords.longitude];
-                console.log("my position: " + _myPos);
+                console.log('my position: ' + _myPos);
                 map.showMe(_myPos);
                 if (!initialized) {
                     onInit();
@@ -69,31 +69,31 @@ var game = (function() {
         },
         connect: function(pin, callbacks) {
             _onUpdate = callbacks.onUpdate;
-            console.log("Game connecting.....");
-            api.request("/users", "post", {
+            console.log('Game connecting.....');
+            api.request('/users', 'post', {
                 pin: pin,
                 lat: _myPos != null ? _myPos[0] : null,
                 long: _myPos != null ? _myPos[1] : null
             }).done(function(data) {
-                console.log("Game connected");
+                console.log('Game connected');
                 console.log(data);
-                Cookies.set("uid", data.id, {expires: 7});
+                Cookies.set('uid', data.id, {expires: 7});
                 map.showTeam(data.state.players, data.id);
                 callbacks.onConnect();
             }).fail(function() {
-                console.log("Game connection error");
+                console.log('Game connection error');
             });
         },
         disconnect: function(onDisconnect) {
-            console.log("Game disconnecting....");
-            api.request("/users", "delete", {
-                id: Cookies.get("uid")
+            console.log('Game disconnecting....');
+            api.request('/users', 'delete', {
+                id: Cookies.get('uid')
             }).done(function() {
-                Cookies.remove("uid");
+                Cookies.remove('uid');
                 map.showTeam([]);
                 onDisconnect();
             }).fail(function() {
-                console.log("Disconnecting error");
+                console.log('Disconnecting error');
             })
         }
     }
@@ -102,7 +102,7 @@ var game = (function() {
 var api = (function() {
     return {
         post: function(path, data) {
-            return req(path, "post", data);
+            return req(path, 'post', data);
         },
         put: function(path, data) {
 
@@ -111,8 +111,8 @@ var api = (function() {
             return $.ajax({
                 url: appSettings.apiEndpoint + path,
                 type: method,
-                dataType: "json",
-                contentType: "application/json",
+                dataType: 'json',
+                contentType: 'application/json',
                 data: JSON.stringify(data)
             });
         }
@@ -121,43 +121,43 @@ var api = (function() {
 
 var dashboard = (function() {
     var connect = function(pin) {
-        showBlock("loading");
+        showBlock('loading');
         game.connect(pin, {
             onConnect: function() {
                 $pinSpan.text(pin);
-                showBlock("info");
+                showBlock('info');
             },
             onUpdate: function() {
-                console.log("Update callback");
+                console.log('Update callback');
             }
         });
     };
 
     var disconnect = function() {
-        showBlock("loading");
+        showBlock('loading');
         game.disconnect(function() {
-            $pinSpan.text("");
-            $pinEdit.val("");
-            showBlock("input");
+            $pinSpan.text('');
+            $pinEdit.val('');
+            showBlock('input');
         });
     };
 
     var showBlock = function(block) {
-        $pinInputBlock.toggle(block == "input");
-        $loadingBlock.toggle(block == "loading");
-        $infoBlock.toggle(block == "info");
+        $pinInputBlock.toggle(block == 'input');
+        $loadingBlock.toggle(block == 'loading');
+        $infoBlock.toggle(block == 'info');
     };
 
-    var $dashboard = $("#dashboard");
-    var $pinInputBlock = $("#pin-input-block");
-    var $loadingBlock = $("#loading-block");
-    var $infoBlock = $("#info-block");
-    var $pinEdit = $("#pin-edit");
-    var $startBtn = $("#start-btn");
-    var $exitBtn = $("#exit-btn");
-    var $pinSpan = $("#pin-span");
+    var $dashboard = $('#dashboard');
+    var $pinInputBlock = $('#pin-input-block');
+    var $loadingBlock = $('#loading-block');
+    var $infoBlock = $('#info-block');
+    var $pinEdit = $('#pin-edit');
+    var $startBtn = $('#start-btn');
+    var $exitBtn = $('#exit-btn');
+    var $pinSpan = $('#pin-span');
 
-    $startBtn.on("click", function() {
+    $startBtn.on('click', function() {
         connect($pinEdit.val());
     });
 
@@ -167,7 +167,7 @@ var dashboard = (function() {
         }
     });
 
-    $exitBtn.on("click", function() {
+    $exitBtn.on('click', function() {
         disconnect();
     });
 
@@ -179,7 +179,7 @@ var dashboard = (function() {
 }());
 
 function initGame(ymaps) {
-    game.init(ymaps, "map", function() {
+    game.init(ymaps, 'map', function() {
         dashboard.show();
     });
 }
