@@ -20,7 +20,9 @@ var map = (function() {
             var ids = [];
             for (var i = 0; i < players.length; i++) {
                 var id = players[i].user.id;
+                var preset = players[i].target ? 'islands#darkGreenCircleDotIcon' : 'islands#redCircleDotIcon';
                 if (id == ownId) {
+                    _me.options.set('preset', preset);
                     continue;
                 }
                 var coords = [players[i].user.latitude, players[i].user.longitude];
@@ -28,9 +30,10 @@ var map = (function() {
                 if (mark) {
                     console.log('Changing coordinates for ' + id);
                     mark.geometry.setCoordinates(coords);
+                    mark.options.set("preset", preset)
                 } else {
                     console.log('Adding coordinates for ' + id);
-                    mark = new ymaps.Placemark(coords, {}, {preset: 'islands#redCircleDotIcon'});
+                    mark = new ymaps.Placemark(coords, {}, {preset: preset});
                     _map.geoObjects.add(mark);
                     _marks[id] = mark;
                 }
