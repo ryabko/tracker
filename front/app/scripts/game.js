@@ -50,9 +50,26 @@ var map = (function() {
 }());
 
 var game = (function() {
+    var _myId = null;
     var _myPos = null;
     var _onUpdate = null;
-    var initialized = false;
+    var _updateTimer = null;
+    var _initialized = false;
+
+    var update = function() {
+        console.log("update");
+        api.request('/users', 'put', {
+            id: _myId,
+            lat: _myPos != null ? _myPos[0] : null,
+            long: _myPos != null ? _myPos[1] : null
+        }).done(function(data) {
+            console.log('Updated');
+            console.log(data);
+            map.showTeam(data.state.players, _myId);
+        }).fail(function() {
+            console.log('Updating error');
+        });
+    };
 
     return {
         init: function(ymaps, mapId, onInit) {
@@ -61,9 +78,9 @@ var game = (function() {
                 _myPos = [position.coords.latitude, position.coords.longitude];
                 console.log('my position: ' + _myPos);
                 map.showMe(_myPos);
-                if (!initialized) {
+                if (!_initialized) {
                     onInit();
-                    initialized = true;
+                    _initialized = true;
                 }
             }, function () {}, appSettings.posWatchOptions);
         },
@@ -77,8 +94,10 @@ var game = (function() {
             }).done(function(data) {
                 console.log('Game connected');
                 console.log(data);
+                _myId = data.id;
                 Cookies.set('uid', data.id, {expires: 7});
                 map.showTeam(data.state.players, data.id);
+                _updateTimer = setInterval(update, appSettings.updateInterval * 1000);
                 callbacks.onConnect();
             }).fail(function() {
                 console.log('Game connection error');
@@ -87,8 +106,12 @@ var game = (function() {
         disconnect: function(onDisconnect) {
             console.log('Game disconnecting....');
             api.request('/users', 'delete', {
-                id: Cookies.get('uid')
+                id: _myId
             }).done(function() {
+                if (_updateTimer) {
+                    clearInterval(_updateTimer);
+                }
+                _myId = null;
                 Cookies.remove('uid');
                 map.showTeam([]);
                 onDisconnect();
