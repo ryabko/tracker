@@ -9,6 +9,8 @@ public class GameState {
 
     private List<UserState> players;
 
+    private Destination destination;
+
     public List<UserState> getPlayers() {
         return players;
     }
@@ -17,4 +19,11 @@ public class GameState {
         this.players = players;
     }
 
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
 }

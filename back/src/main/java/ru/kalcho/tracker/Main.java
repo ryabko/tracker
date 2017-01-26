@@ -4,8 +4,8 @@ import org.sql2o.Sql2o;
 import org.sql2o.quirks.NoQuirks;
 import ru.kalcho.sql2o.LocalDateTimeConverter;
 import ru.kalcho.sql2o.UUIDConverter;
-import ru.kalcho.tracker.controller.UserController;
 import ru.kalcho.tracker.service.CheckPointService;
+import ru.kalcho.tracker.service.DestinationService;
 import ru.kalcho.tracker.service.GameService;
 import ru.kalcho.tracker.service.UserService;
 
@@ -28,9 +28,8 @@ public class Main {
 
         UserService userService = new UserService(sql2o);
         CheckPointService checkPointService = new CheckPointService(sql2o);
-        GameService gameService = new GameService(userService, checkPointService, 60);
-
-        new UserController(userService, gameService).init();
+        DestinationService destinationService = new DestinationService(sql2o);
+        GameService gameService = new GameService(userService, checkPointService, destinationService, 60);
 
         options("/*", (request, response) -> {
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");

@@ -6,10 +6,7 @@ import ru.kalcho.tracker.model.User;
 import ru.kalcho.tracker.model.UserState;
 import ru.kalcho.tracker.util.GeoUtils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,11 +19,15 @@ public class GameService {
 
     private CheckPointService checkPointService;
 
+    private DestinationService destinationService;
+    
     private int activeTimeout;
 
-    public GameService(UserService userService, CheckPointService checkPointService, int activeTimeout) {
+    public GameService(UserService userService, CheckPointService checkPointService,
+                       DestinationService destinationService, int activeTimeout) {
         this.userService = userService;
         this.checkPointService = checkPointService;
+        this.destinationService = destinationService;
         this.activeTimeout = activeTimeout;
     }
 
@@ -47,6 +48,10 @@ public class GameService {
                 .map(u -> new UserState(u, usersCheckPoints.get(u) != null))
                 .collect(toList())
         );
+
+        if (points.size() > 0 && points.size() == usersCheckPoints.values().stream().filter(Objects::nonNull).count()) {
+            state.setDestination(destinationService.obtainDestination());
+        }
 
         return state;
     }

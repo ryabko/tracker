@@ -13,8 +13,8 @@ create table users (
   creation_date datetime not null,
   update_date datetime not null,
   ip varchar(15),
-  latitude float(10, 6),
-  longitude float(10, 6),
+  latitude float(10, 6) not null,
+  longitude float(10, 6) not null,
   bot bool,
   primary key(id)
 ) default charset=utf8;
@@ -27,4 +27,11 @@ create table check_points (
   longitude float(10, 6) not null,
   radius int not null,
   primary key(id)
+) default charset=utf8;
+
+drop table if exists destination;
+create table destination (
+  name varchar(50) not null,
+  latitude float(10, 6) not null,
+  longitude float(10, 6) not null
 ) default charset=utf8;
