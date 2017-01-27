@@ -10,6 +10,10 @@ body {
     margin: 0;
 }
 
+#content {
+    margin: 10px;
+}
+
 #map {
     background: url("../images/loader.gif") no-repeat center center;
     height: 100%;

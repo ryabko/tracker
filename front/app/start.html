@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
+    <title>Карта</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+</head>
+<body>
+
+<div id="content">
+    <p>
+        Включите GPS на вашем устройстве (в Android &mdash; &laquo;Геоданные&raquo;,
+        в iOS &mdash; &laquo;Геолокация&raquo;).
+    </p>
+    <p>
+        После ввода PIN-кода браузер спросит разрешения на получение вашего
+        местоположения &mdash; выберите &laquo;Разрешить&raquo;.
+    </p>
+    <div>
+        <label>PIN: <input id="pin-edit" type="text" size="6"></label>
+        <button id="start-btn">Войти</button>
+    </div>
+    <p>Если браузер ничего не спросил про местоположение,
+        проверьте в настройках устройства, что браузеру разрешен доступ к геолокации.</p>
+</div>
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="/bower_components/jquery/dist/jquery.js"></script>
+<script src="/bower_components/js-cookie/src/js.cookie.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js scripts/main.js -->
+<script src="scripts/global.js"></script>
+<script src="scripts/main.js"></script>
+<!-- endbuild -->
+
+</body>
+</html>
