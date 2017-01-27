@@ -201,7 +201,7 @@ var dashboard = (function() {
     var $infoBlock = $('#info-block');
     var $pinEdit = $('#pin-edit');
     var $startBtn = $('#start-btn');
-    var $exitBtn = $('#exit-btn');
+    var $exitBtn = $('#exit-link');
     var $pinSpan = $('#pin-span');
 
     $startBtn.on('click', function() {
