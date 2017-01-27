@@ -59,7 +59,7 @@ var map = (function() {
                     _destination.geometry.setCoordinates(destCoords);
                 } else {
                     console.log('Creating destination');
-                    _destination = new ymaps.Placemark(destCoords, {}, {preset: 'islands#blueFamilyCircleIcon'});
+                    _destination = new ymaps.Placemark(destCoords, {iconContent: 'LT'}, {preset: 'islands#nightCircleIcon'});
                     _map.geoObjects.add(_destination);
                 }
             } else {
