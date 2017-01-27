@@ -35,7 +35,7 @@ public class Main {
         UserService userService = new UserService(sql2o);
         CheckPointService checkPointService = new CheckPointService(sql2o);
         DestinationService destinationService = new DestinationService(sql2o);
-        GameService gameService = new GameService(userService, checkPointService, destinationService, 60);
+        GameService gameService = new GameService(userService, checkPointService, destinationService, 10);
 
         new UserController(userService, gameService).init();
 
