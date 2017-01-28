@@ -29,11 +29,9 @@ var map = (function() {
                 var coords = [state.players[i].user.latitude, state.players[i].user.longitude];
                 var mark = _otherPlayers[id];
                 if (mark) {
-                    console.log('Changing coordinates for ' + id);
                     mark.geometry.setCoordinates(coords);
                     mark.options.set('preset', preset)
                 } else {
-                    console.log('Adding coordinates for ' + id);
                     mark = new ymaps.Placemark(coords, {}, {preset: preset});
                     _map.geoObjects.add(mark);
                     _otherPlayers[id] = mark;
@@ -43,7 +41,6 @@ var map = (function() {
             for (var key in _otherPlayers) {
                 if (_otherPlayers.hasOwnProperty(key)) {
                     if (ids.indexOf(key) == -1) {
-                        console.log('Deleting coordinates for ' + key);
                         _map.geoObjects.remove(_otherPlayers[key]);
                         delete _otherPlayers[key];
                     }
@@ -55,16 +52,13 @@ var map = (function() {
             if (state.destination) {
                 var destCoords = [state.destination.latitude, state.destination.longitude];
                 if (_destination) {
-                    console.log('Updating destination');
                     _destination.geometry.setCoordinates(destCoords);
                 } else {
-                    console.log('Creating destination');
                     _destination = new ymaps.Placemark(destCoords, {iconContent: 'LT'}, {preset: 'islands#nightCircleIcon'});
                     _map.geoObjects.add(_destination);
                 }
             } else {
                 if (_destination) {
-                    console.log('Removing destination');
                     _map.geoObjects.remove(_destination);
                     _destination = null;
                 }
@@ -79,56 +73,57 @@ var game = (function() {
     var _onUpdate = null;
     var _updateTimer = null;
     var _initialized = false;
+    var _pin = null;
 
     var update = function() {
-        console.log('update');
         api.request('/users', 'put', {
             id: _myId,
             lat: _myPos != null ? _myPos[0] : null,
             long: _myPos != null ? _myPos[1] : null
         }).done(function(data) {
-            console.log('Updated');
-            console.log(data);
             map.showState(data.state, _myId);
         }).fail(function() {
-            console.log('Updating error');
+        });
+    };
+
+    var connect = function(pin, callbacks) {
+        _onUpdate = callbacks.onUpdate;
+        api.request('/users', 'post', {
+            id: _myId,
+            pin: pin,
+            lat: _myPos != null ? _myPos[0] : null,
+            long: _myPos != null ? _myPos[1] : null
+        }).done(function(data) {
+            _myId = data.id;
+            Cookies.set('uid', data.id, {expires: 7});
+            map.showState(data.state, data.id);
+            _updateTimer = setInterval(update, appSettings.updateInterval * 1000);
+            callbacks.onConnect();
+        }).fail(function() {
         });
     };
 
     return {
-        init: function(ymaps, mapId, onInit) {
+        init: function(ymaps, mapId, onInit, onConnect, onUpdate) {
+            _pin = Cookies.get("upin");
+            _myId = Cookies.get('uid');
+            if (!_pin) {
+                window.location.href = "/start.html";
+                return;
+            }
             map.init(ymaps, mapId);
             navigator.geolocation.watchPosition(function (position) {
                 _myPos = [position.coords.latitude, position.coords.longitude];
-                console.log('my position: ' + _myPos);
                 map.showMe(_myPos);
                 if (!_initialized) {
+                    connect(_pin, {onConnect: onConnect, onUpdate: onUpdate});
                     onInit();
                     _initialized = true;
                 }
             }, function () {}, appSettings.posWatchOptions);
         },
-        connect: function(pin, callbacks) {
-            _onUpdate = callbacks.onUpdate;
-            console.log('Game connecting.....');
-            api.request('/users', 'post', {
-                pin: pin,
-                lat: _myPos != null ? _myPos[0] : null,
-                long: _myPos != null ? _myPos[1] : null
-            }).done(function(data) {
-                console.log('Game connected');
-                console.log(data);
-                _myId = data.id;
-                Cookies.set('uid', data.id, {expires: 7});
-                map.showState(data.state, data.id);
-                _updateTimer = setInterval(update, appSettings.updateInterval * 1000);
-                callbacks.onConnect();
-            }).fail(function() {
-                console.log('Game connection error');
-            });
-        },
+        // connect: _connect,
         disconnect: function(onDisconnect) {
-            console.log('Game disconnecting....');
             api.request('/users', 'delete', {
                 id: _myId
             }).done(function() {
@@ -137,11 +132,14 @@ var game = (function() {
                 }
                 _myId = null;
                 Cookies.remove('uid');
+                Cookies.remove('upin');
                 map.showState({players: [], destination: null});
                 onDisconnect();
             }).fail(function() {
-                console.log('Disconnecting error');
             })
+        },
+        getPin: function() {
+            return _pin;
         }
     }
 }());
@@ -168,6 +166,9 @@ var api = (function() {
 
 var dashboard = (function() {
     var connect = function(pin) {
+        if (!pin) {
+            return;
+        }
         showBlock('loading');
         game.connect(pin, {
             onConnect: function() {
@@ -175,7 +176,6 @@ var dashboard = (function() {
                 showBlock('info');
             },
             onUpdate: function() {
-                console.log('Update callback');
             }
         });
     };
@@ -183,9 +183,10 @@ var dashboard = (function() {
     var disconnect = function() {
         showBlock('loading');
         game.disconnect(function() {
-            $pinSpan.text('');
-            $pinEdit.val('');
-            showBlock('input');
+            // $pinSpan.text('');
+            // $pinEdit.val('');
+            // showBlock('input');
+            window.location.href = "/start.html";
         });
     };
 
@@ -199,20 +200,20 @@ var dashboard = (function() {
     var $pinInputBlock = $('#pin-input-block');
     var $loadingBlock = $('#loading-block');
     var $infoBlock = $('#info-block');
-    var $pinEdit = $('#pin-edit');
-    var $startBtn = $('#start-btn');
+    // var $pinEdit = $('#pin-edit');
+    // var $startBtn = $('#start-btn');
     var $exitBtn = $('#exit-link');
     var $pinSpan = $('#pin-span');
 
-    $startBtn.on('click', function() {
-        connect($pinEdit.val());
-    });
-
-    $pinEdit.keyup(function(e) {
-        if (e.keyCode == 13) {
-            $startBtn.click();
-        }
-    });
+    // $startBtn.on('click', function() {
+    //     connect($pinEdit.val());
+    // });
+    //
+    // $pinEdit.keyup(function(e) {
+    //     if (e.keyCode == 13) {
+    //         $startBtn.click();
+    //     }
+    // });
 
     $exitBtn.on('click', function() {
         disconnect();
@@ -220,13 +221,38 @@ var dashboard = (function() {
 
     return {
         show: function() {
+            $pinSpan.text(game.getPin());
+            showBlock('info');
             $dashboard.show();
         }
     }
 }());
 
+var start = (function() {
+    var $pinEdit = $('#pin-edit');
+    var $startBtn = $('#start-btn');
+
+    $pinEdit.keyup(function(e) {
+        if (e.keyCode == 13) {
+            $startBtn.click();
+        }
+    });
+
+    $startBtn.on('click', function() {
+        // connect($pinEdit.val());
+        var pin = $pinEdit.val();
+        if (pin) {
+            Cookies.set('upin', pin, {expires: 7});
+            window.location.href = "/play.html";
+        }
+    });
+
+}());
+
 function initGame(ymaps) {
-    game.init(ymaps, 'map', function() {
+    game.init(ymaps, 'map', function() {}, function() {
         dashboard.show();
+    }, function() {
+
     });
 }
