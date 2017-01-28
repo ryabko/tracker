@@ -105,10 +105,10 @@ var game = (function() {
 
     return {
         init: function(ymaps, mapId, onInit, onConnect, onUpdate) {
-            _pin = Cookies.get("upin");
+            _pin = Cookies.get('upin');
             _myId = Cookies.get('uid');
             if (!_pin) {
-                window.location.href = "/start.html";
+                window.location.href = '/start.html';
                 return;
             }
             map.init(ymaps, mapId);
@@ -186,7 +186,7 @@ var dashboard = (function() {
             // $pinSpan.text('');
             // $pinEdit.val('');
             // showBlock('input');
-            window.location.href = "/start.html";
+            window.location.href = '/start.html';
         });
     };
 
@@ -243,7 +243,7 @@ var start = (function() {
         var pin = $pinEdit.val();
         if (pin) {
             Cookies.set('upin', pin, {expires: 7});
-            window.location.href = "/play.html";
+            window.location.href = '/play.html';
         }
     });
 
