@@ -28,6 +28,16 @@ public class UserController {
         post("/api/users", "application/json", (request, response) -> {
             UserPayload payload = JsonUtils.jsonToObject(request.body(), UserPayload.class);
 
+            if (payload.getId() != null) {
+                UUID id = UUID.fromString(payload.getId());
+                User user = userService.findById(id);
+                if (user.getPin().equals(payload.getPin())) {
+                    userService.updateUser(id, LocalDateTime.now(), payload.getLatitude(), payload.getLongitude());
+                    GameState state = gameService.obtainGameState(payload.getPin());
+                    return JsonUtils.objectToJSON(new UserAnswer(id, state));
+                }
+            }
+
             UUID id = userService.createUser(payload.getPin(), LocalDateTime.now(), request.ip(),
                     payload.getLatitude(), payload.getLongitude(), false);
             GameState state = gameService.obtainGameState(payload.getPin());
