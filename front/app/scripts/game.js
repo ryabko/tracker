@@ -122,7 +122,6 @@ var game = (function() {
                 }
             }, function () {}, appSettings.posWatchOptions);
         },
-        // connect: _connect,
         disconnect: function(onDisconnect) {
             api.request('/users', 'delete', {
                 id: _myId
@@ -183,9 +182,6 @@ var dashboard = (function() {
     var disconnect = function() {
         showBlock('loading');
         game.disconnect(function() {
-            // $pinSpan.text('');
-            // $pinEdit.val('');
-            // showBlock('input');
             window.location.href = '/start.html';
         });
     };
@@ -200,20 +196,8 @@ var dashboard = (function() {
     var $pinInputBlock = $('#pin-input-block');
     var $loadingBlock = $('#loading-block');
     var $infoBlock = $('#info-block');
-    // var $pinEdit = $('#pin-edit');
-    // var $startBtn = $('#start-btn');
     var $exitBtn = $('#exit-link');
     var $pinSpan = $('#pin-span');
-
-    // $startBtn.on('click', function() {
-    //     connect($pinEdit.val());
-    // });
-    //
-    // $pinEdit.keyup(function(e) {
-    //     if (e.keyCode == 13) {
-    //         $startBtn.click();
-    //     }
-    // });
 
     $exitBtn.on('click', function() {
         disconnect();
@@ -239,7 +223,6 @@ var start = (function() {
     });
 
     $startBtn.on('click', function() {
-        // connect($pinEdit.val());
         var pin = $pinEdit.val();
         if (pin) {
             Cookies.set('upin', pin, {expires: 7});
