@@ -1,7 +1,8 @@
--- change PASSWORD
+-- change password
 
 create database if not exists tracker;
-grant all privileges on tracker.* to tracker@localhost identified by "PASSWORD";
+create user tracker@localhost identified by 'password';
+grant all privileges on tracker.* to tracker@localhost;
 flush privileges;
 
 use tracker;
@@ -28,6 +29,11 @@ create table check_points (
   radius int not null,
   primary key(id)
 ) default charset=utf8;
+
+alter table check_points
+add (
+    group_index int
+);
 
 drop table if exists destination;
 create table destination (

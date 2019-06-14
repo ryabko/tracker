@@ -9,6 +9,8 @@ public class GameState {
 
     private List<UserState> players;
 
+    private List<CheckPoint> checkPoints;
+
     private Destination destination;
 
     public List<UserState> getPlayers() {
@@ -17,6 +19,14 @@ public class GameState {
 
     public void setPlayers(List<UserState> players) {
         this.players = players;
+    }
+
+    public List<CheckPoint> getCheckPoints() {
+        return checkPoints;
+    }
+
+    public void setCheckPoints(List<CheckPoint> checkPoints) {
+        this.checkPoints = checkPoints;
     }
 
     public Destination getDestination() {

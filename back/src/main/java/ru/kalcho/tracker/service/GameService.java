@@ -44,6 +44,7 @@ public class GameService {
             usersCheckPoints.put(user, match);
         }
 
+        state.setCheckPoints(points);
         state.setPlayers(users.stream()
                 .map(u -> new UserState(u, usersCheckPoints.get(u) != null))
                 .collect(toList())

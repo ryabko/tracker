@@ -2,6 +2,7 @@ var map = (function() {
     var _map = null;
     var _me = null;
     var _otherPlayers = {};
+    var _checkPoints = {};
     var _destination = null;
 
     return {
@@ -43,6 +44,31 @@ var map = (function() {
                     if (ids.indexOf(key) == -1) {
                         _map.geoObjects.remove(_otherPlayers[key]);
                         delete _otherPlayers[key];
+                    }
+                }
+            }
+
+            var checkPointIds = [];
+            for (i = 0; i < state.checkPoints.length; i++) {
+                var checkPointId = state.checkPoints[i].id.toString();
+                var checkPointCoords = [state.checkPoints[i].latitude, state.checkPoints[i].longitude];
+                var checkPointPreset = 'islands#blueGovernmentCircleIcon';
+                var checkPoint = _checkPoints[checkPointId];
+                if (checkPoint) {
+                    checkPoint.geometry.setCoordinates(checkPointCoords);
+                    checkPoint.options.set('preset', checkPointPreset)
+                } else {
+                    checkPoint = new ymaps.Placemark(checkPointCoords, {}, {preset: checkPointPreset});
+                    _map.geoObjects.add(checkPoint);
+                    _checkPoints[checkPointId] = checkPoint;
+                }
+                checkPointIds.push(checkPointId);
+            }
+            for (key in _checkPoints) {
+                if (_checkPoints.hasOwnProperty(key)) {
+                    if (checkPointIds.indexOf(key) === -1) {
+                        _map.geoObjects.remove(_checkPoints[key]);
+                        delete _checkPoints[key];
                     }
                 }
             }

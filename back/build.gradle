@@ -10,6 +10,12 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
+applicationDefaultJvmArgs = ["-Duser.timezone=Europe/Moscow",
+                             "-Duser.country=RU",
+                             "-Duser.region=RU",
+                             "-Duser.language=ru",
+                             "-Dfile.encoding=UTF-8"]
+
 mainClassName = "ru.kalcho.tracker.Main"
 
 repositories {
@@ -25,7 +31,7 @@ dependencies {
     compile "com.sparkjava:spark-core:2.5.4"
 
     compile 'org.sql2o:sql2o:1.5.4'
-    compile 'mysql:mysql-connector-java:5.1.40'
+    compile 'mysql:mysql-connector-java:8.0.11'
 
     compile 'com.fasterxml.jackson.core:jackson-core:2.5.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
