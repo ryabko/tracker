@@ -83,7 +83,7 @@ public class CheckPointService {
     }
 
     private void removeCheckPointsNotInNames(Connection connection, Collection<String> names) {
-        connection.createQuery("delete check_points where name not in (:names)")
+        connection.createQuery("delete from check_points where name not in (:names)")
                 .addParameter("names", names)
                 .executeUpdate();
     }

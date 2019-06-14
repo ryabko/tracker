@@ -16,15 +16,15 @@ public class CheckPointController {
     }
 
     public void init() {
-        get("/api/check-points", "plain/text", (request, response) -> {
+        get("/api/check-points", "text/plain", (request, response) -> {
             List<CheckPoint> checkPoints = checkPointService.findAll();
             return CheckPointsSerializer.serialize(checkPoints);
         });
 
-        put("/api/check-points", "plain/text", (request, response) -> {
+        put("/api/check-points", "text/plain", (request, response) -> {
             List<CheckPoint> checkPoints = CheckPointsSerializer.deserialize(request.body());
             checkPointService.updateCheckPoints(checkPoints);
-            return null;
+            return "OK";
         });
     }
 }

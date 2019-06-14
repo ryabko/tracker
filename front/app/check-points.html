@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
+    <title>Редактирование точек</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+</head>
+<body>
+
+<div id="content">
+    <p>
+        Редактирование точек
+    </p>
+    <div>
+        <textarea id="check-points" cols="80" rows="10"></textarea>
+    </div>
+    <div>
+        <button id="save">Сохранить</button>
+    </div>
+</div>
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="/bower_components/jquery/dist/jquery.js"></script>
+<script src="/bower_components/js-cookie/src/js.cookie.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js scripts/game.js -->
+<script src="scripts/global.js"></script>
+<script src="scripts/check-points.js"></script>
+<!-- endbuild -->
+
+<script type="text/javascript">
+    init();
+</script>
+
+</body>
+</html>
