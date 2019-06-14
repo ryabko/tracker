@@ -47,14 +47,21 @@ public class GameService {
             usersCheckPoints.put(user, match);
         }
 
-        state.setCheckPoints(points);
+        boolean isDestinationPlayer = destinationService.isDestinationUserPin(pin);
+        state.setDestinationPlayer(isDestinationPlayer);
+
+        if (!isDestinationPlayer) {
+            state.setCheckPoints(points);
+        } else {
+            state.setCheckPoints(Collections.emptyList());
+        }
         state.setPlayers(users.stream()
                 .map(u -> new UserState(u, usersCheckPoints.get(u) != null))
                 .collect(toList())
         );
 
         if (points.size() > 0 && points.size() == usersCheckPoints.values().stream().filter(Objects::nonNull).count()) {
-            state.setDestination(destinationService.obtainDestination());
+            state.setDestination(destinationService.obtainDestinationUser(activeTimeout));
         }
 
         return state;

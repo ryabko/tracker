@@ -7,11 +7,21 @@ import java.util.List;
  */
 public class GameState {
 
+    private boolean destinationPlayer;
+
     private List<UserState> players;
 
     private List<CheckPoint> checkPoints;
 
     private Destination destination;
+
+    public boolean isDestinationPlayer() {
+        return destinationPlayer;
+    }
+
+    public void setDestinationPlayer(boolean destinationPlayer) {
+        this.destinationPlayer = destinationPlayer;
+    }
 
     public List<UserState> getPlayers() {
         return players;

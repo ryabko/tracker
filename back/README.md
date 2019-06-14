@@ -13,6 +13,7 @@
 
 Дополнительные параметры
 - CHECK_POINTS_CHANGE_INTERVAL (в минутах, по умолчанию 5)
+- DESTINATION_USER_PIN
 
 Развертывание
 ---

@@ -38,9 +38,11 @@ public class Main {
         }
         int checkPointsChangeInterval = Integer.parseInt(checkPointsChangeIntervalString);
 
+        String destinationUserPin = System.getenv("DESTINATION_USER_PIN");
+
         UserService userService = new UserService(sql2o);
         CheckPointService checkPointService = new CheckPointService(sql2o, checkPointsChangeInterval);
-        DestinationService destinationService = new DestinationService(sql2o);
+        DestinationService destinationService = new DestinationService(sql2o, userService, destinationUserPin);
         GameService gameService = new GameService(userService, checkPointService, destinationService, 10);
 
         new UserController(userService, gameService).init();
