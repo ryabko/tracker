@@ -10,6 +10,7 @@ public class CheckPoint {
     private Float latitude;
     private Float longitude;
     private Integer radius;
+    private Integer groupIndex;
 
     public Long getId() {
         return id;
@@ -49,6 +50,14 @@ public class CheckPoint {
 
     public void setRadius(Integer radius) {
         this.radius = radius;
+    }
+
+    public Integer getGroupIndex() {
+        return groupIndex;
+    }
+
+    public void setGroupIndex(Integer groupIndex) {
+        this.groupIndex = groupIndex;
     }
 
     @Override

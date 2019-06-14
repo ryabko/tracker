@@ -6,7 +6,9 @@ import ru.kalcho.tracker.model.CheckPoint;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -22,18 +24,68 @@ public class CheckPointService {
         this.changeIntervalInMinutes = changeIntervalInMinutes;
     }
 
-    public Long createCheckPoint(String name, Float latitude, Float longitude, Integer radius) {
+    public void updateCheckPoints(List<CheckPoint> checkPoints) {
         try (Connection connection = sql2o.open()) {
-            return (Long) connection.createQuery("insert into check_points " +
-                    "(name, latitude, longitude, radius) " +
-                    "values (:name, :latitude, :longitude, :radius)")
-                    .addParameter("name", name)
-                    .addParameter("latitude", latitude)
-                    .addParameter("longitude", longitude)
-                    .addParameter("radius", radius)
-                    .executeUpdate()
-            .getKey();
+            for (CheckPoint checkPoint : checkPoints) {
+                createOrUpdateCheckPoint(connection, checkPoint.getName(), checkPoint.getLatitude(),
+                        checkPoint.getLongitude(), checkPoint.getRadius(), checkPoint.getGroupIndex());
+            }
+            List<String> names = checkPoints.stream().map(CheckPoint::getName).collect(Collectors.toList());
+            removeCheckPointsNotInNames(connection, names);
         }
+    }
+
+    public void createOrUpdateCheckPoint(Connection connection, String name, Float latitude, Float longitude,
+                                         Integer radius, Integer groupIndex) {
+        CheckPoint checkPoint = findByName(connection, name);
+        if (checkPoint == null) {
+            createCheckPoint(connection, name, latitude, longitude, radius, groupIndex);
+        } else {
+            updateCheckPoint(connection, name, latitude, longitude, radius, groupIndex);
+        }
+    }
+
+    private CheckPoint findByName(Connection connection, String name) {
+        return connection.createQuery(
+                "select name, latitude, longitude, radius, group_index from check_points " +
+                        "where name = :name")
+                .addParameter("name", name)
+                .addColumnMapping("group_index", "groupIndex")
+                .executeAndFetch(CheckPoint.class)
+                .stream().findFirst().orElse(null);
+    }
+
+    private Long createCheckPoint(Connection connection, String name,
+                                  Float latitude, Float longitude, Integer radius, Integer groupIndex) {
+        return (Long) connection.createQuery("insert into check_points " +
+                "(name, latitude, longitude, radius, group_index) " +
+                "values (:name, :latitude, :longitude, :radius, :groupIndex)")
+                .addParameter("name", name)
+                .addParameter("latitude", latitude)
+                .addParameter("longitude", longitude)
+                .addParameter("radius", radius)
+                .addParameter("groupIndex", groupIndex)
+                .executeUpdate()
+                .getKey();
+    }
+
+    private void updateCheckPoint(Connection connection, String name,
+                                  Float latitude, Float longitude, Integer radius, Integer groupIndex) {
+        connection.createQuery("update check_points set " +
+                "latitude = :latitude, longitude = :longitude, " +
+                "radius = :radius, group_index = :groupIndex where name = :name")
+                .addParameter("name", name)
+                .addParameter("latitude", latitude)
+                .addParameter("longitude", longitude)
+                .addParameter("radius", radius)
+                .addParameter("groupIndex", groupIndex)
+                .executeUpdate();
+    }
+
+    private void removeCheckPointsNotInNames(Connection connection, Collection<String> names) {
+        connection.createQuery("delete check_points where name not in (:names)")
+                .addParameter("names", names)
+                .executeUpdate();
     }
 
     public void removeCheckPoint(Long id) {
@@ -47,7 +99,8 @@ public class CheckPointService {
     public List<CheckPoint> findAll() {
         try (Connection connection = sql2o.open()) {
             return connection.createQuery(
-                    "select id, name, latitude, longitude, radius from check_points")
+                    "select id, name, latitude, longitude, radius, group_index from check_points")
+                    .addColumnMapping("group_index", "groupIndex")
                     .executeAndFetch(CheckPoint.class);
         }
     }
