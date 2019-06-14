@@ -80,7 +80,7 @@ var map = (function() {
                 if (_destination) {
                     _destination.geometry.setCoordinates(destCoords);
                 } else {
-                    _destination = new ymaps.Placemark(destCoords, {iconContent: 'LT'}, {preset: 'islands#nightCircleIcon'});
+                    _destination = new ymaps.Placemark(destCoords, {iconContent: 'DZR'}, {preset: 'islands#nightCircleIcon'});
                     _map.geoObjects.add(_destination);
                 }
             } else {
