@@ -6,6 +6,7 @@ import ru.kalcho.tracker.model.User;
 import ru.kalcho.tracker.model.UserState;
 import ru.kalcho.tracker.util.GeoUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -34,8 +35,10 @@ public class GameService {
     public GameState obtainGameState(String pin) {
         GameState state = new GameState();
 
-        List<CheckPoint> points = checkPointService.findAll();
         List<User> users = userService.findByPin(pin, activeTimeout);
+
+        LocalDateTime teamStartDate = getTeamStartDate(users);
+        List<CheckPoint> points = checkPointService.findForTeam(teamStartDate);
 
         Map<User, CheckPoint> usersCheckPoints = new HashMap<>();
 
@@ -69,6 +72,11 @@ public class GameService {
     private boolean userMatchCheckpoint(User user, CheckPoint checkPoint) {
         return GeoUtils.distance(user.getLatitude(), user.getLongitude(),
                 checkPoint.getLatitude(), checkPoint.getLongitude()) < checkPoint.getRadius() ;
+    }
+
+    private LocalDateTime getTeamStartDate(List<User> users) {
+        return users.stream().map(User::getCreationDate)
+                .min(LocalDateTime::compareTo).orElse(null);
     }
 
 }

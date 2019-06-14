@@ -11,6 +11,9 @@
 - DB_USERNAME
 - DB_PASSWORD
 
+Дополнительные параметры
+- CHECK_POINTS_CHANGE_INTERVAL (в минутах, по умолчанию 5)
+
 Развертывание
 ---
 Сборка gradle: задача distTar

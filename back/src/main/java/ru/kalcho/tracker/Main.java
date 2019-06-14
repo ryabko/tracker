@@ -32,8 +32,14 @@ public class Main {
             converters.put(UUID.class, new UUIDConverter());
         }});
 
+        String checkPointsChangeIntervalString = System.getenv("CHECK_POINTS_CHANGE_INTERVAL");
+        if (checkPointsChangeIntervalString == null) {
+            checkPointsChangeIntervalString = "1";
+        }
+        int checkPointsChangeInterval = Integer.parseInt(checkPointsChangeIntervalString);
+
         UserService userService = new UserService(sql2o);
-        CheckPointService checkPointService = new CheckPointService(sql2o);
+        CheckPointService checkPointService = new CheckPointService(sql2o, checkPointsChangeInterval);
         DestinationService destinationService = new DestinationService(sql2o);
         GameService gameService = new GameService(userService, checkPointService, destinationService, 10);
 
