@@ -24,3 +24,5 @@
 ```
 > gulp build
 ```
+
+global.js - apiEndpoint

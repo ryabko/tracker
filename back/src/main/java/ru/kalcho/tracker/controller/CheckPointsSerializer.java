@@ -1,6 +1,5 @@
 package ru.kalcho.tracker.controller;
 
-import com.sun.deploy.util.StringUtils;
 import ru.kalcho.tracker.model.CheckPoint;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class CheckPointsSerializer {
                     checkPoint.getGroupIndex();
             lines.add(line);
         }
-        return StringUtils.join(lines, "\n");
+        return String.join("\n", lines);
     }
 
     public static List<CheckPoint> deserialize(String serialized) {

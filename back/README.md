@@ -40,3 +40,7 @@ alter user tracker@* identified with mysql_native_password by 'password';
 create user tracker@172.17.0.1 identified with mysql_native_password by 'password';
 grant all privileges on tracker.* to tracker@172.17.0.1;
 flush privileges;
+
+
+Caused by: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect string value: '\xAC\xED\x00\x05sr...' for column 'id' at row 1
+ALTER DATABASE tracker CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

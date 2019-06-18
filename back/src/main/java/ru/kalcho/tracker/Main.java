@@ -27,7 +27,8 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        Sql2o sql2o = new Sql2o("jdbc:mysql://" + System.getenv("DB_HOST") + "/" + System.getenv("DB_NAME"),
+        Sql2o sql2o = new Sql2o("jdbc:mysql://" + System.getenv("DB_HOST") + "/" + System.getenv("DB_NAME") +
+                "?serverTimezone=Europe/Moscow",
                 System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"), new NoQuirks() {{
             converters.put(LocalDateTime.class, new LocalDateTimeConverter());
             converters.put(UUID.class, new UUIDConverter());

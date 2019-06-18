@@ -1,6 +1,6 @@
 var appSettings = {
 
-    apiEndpoint: 'http://localhost:4567/api',
+    apiEndpoint: 'https://geotag.tk/api',
     updateInterval: 5,
 
     mapOptions: {

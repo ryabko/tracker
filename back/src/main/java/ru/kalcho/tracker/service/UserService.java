@@ -26,7 +26,7 @@ public class UserService {
             connection.createQuery("insert into users " +
                     "(id, pin, creation_date, update_date, ip, latitude, longitude, bot) " +
                     "values (:id, :pin, :creation_date, :update_date, :ip, :latitude, :longitude, :bot)")
-                    .addParameter("id", id)
+                    .addParameter("id", id.toString())
                     .addParameter("pin", pin)
                     .addParameter("creation_date", date)
                     .addParameter("update_date", date)
@@ -43,7 +43,7 @@ public class UserService {
         try (Connection connection = sql2o.open()) {
             connection.createQuery("update users set update_date = :update_date, " +
                     "latitude = :latitude, longitude = :longitude where id = :id")
-                    .addParameter("id", id)
+                    .addParameter("id", id.toString())
                     .addParameter("update_date", date)
                     .addParameter("latitude", latitude)
                     .addParameter("longitude", longitude)
@@ -54,7 +54,7 @@ public class UserService {
     public void removeUser(UUID id) {
         try (Connection connection = sql2o.open()) {
             connection.createQuery("delete from users where id = :id")
-                    .addParameter("id", id)
+                    .addParameter("id", id.toString())
                     .executeUpdate();
         }
     }
@@ -64,7 +64,7 @@ public class UserService {
             return connection.createQuery(
                     "select id, pin, creation_date creationDate, update_date updateDate, " +
                             "ip, latitude, longitude, bot from users where id = :id")
-                    .addParameter("id", id)
+                    .addParameter("id", id.toString())
                     .executeAndFetch(User.class)
                     .stream().findFirst().orElse(null);
         }

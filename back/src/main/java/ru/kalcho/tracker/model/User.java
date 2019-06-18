@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class User {
 
-    private UUID id;
+    private String id;
 
     @JsonIgnore
     private String pin;
@@ -30,11 +30,11 @@ public class User {
     @JsonIgnore
     private boolean bot;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
