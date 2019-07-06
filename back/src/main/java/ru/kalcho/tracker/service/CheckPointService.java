@@ -55,9 +55,9 @@ public class CheckPointService {
                 .stream().findFirst().orElse(null);
     }
 
-    private Long createCheckPoint(Connection connection, String name,
+    private void createCheckPoint(Connection connection, String name,
                                   Float latitude, Float longitude, Integer radius, Integer groupIndex) {
-        return (Long) connection.createQuery("insert into check_points " +
+        connection.createQuery("insert into check_points " +
                 "(name, latitude, longitude, radius, group_index) " +
                 "values (:name, :latitude, :longitude, :radius, :groupIndex)")
                 .addParameter("name", name)
@@ -65,8 +65,7 @@ public class CheckPointService {
                 .addParameter("longitude", longitude)
                 .addParameter("radius", radius)
                 .addParameter("groupIndex", groupIndex)
-                .executeUpdate()
-                .getKey();
+                .executeUpdate();
     }
 
     private void updateCheckPoint(Connection connection, String name,
