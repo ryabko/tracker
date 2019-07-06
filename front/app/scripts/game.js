@@ -158,7 +158,7 @@ var game = (function() {
                 _myId = null;
                 Cookies.remove('uid');
                 Cookies.remove('upin');
-                map.showState({players: [], destination: null});
+                map.showState({players: [], checkPoints: [], destination: null});
                 onDisconnect();
             }).fail(function() {
             })
