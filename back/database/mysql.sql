@@ -21,6 +21,11 @@ create table users (
 ) default charset=utf8;
 
 alter table users
+add (
+    removed bool default false
+);
+
+alter table users
 modify pin varchar(50) not null;
 
 drop table if exists check_points;
