@@ -20,6 +20,9 @@ create table users (
   primary key(id)
 ) default charset=utf8;
 
+alter table users
+modify pin varchar(50) not null;
+
 drop table if exists check_points;
 create table check_points (
   id int not null auto_increment,
